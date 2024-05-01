@@ -63,6 +63,9 @@ const Users = mongoose.model("Users", {
   cartData: {
     type: Object,
   },
+  orderData: {
+    type: Object,
+  },
   date: {
     type: Date,
     default: Date.now,
@@ -191,7 +194,20 @@ app.post('/addtocart', fetchuser, async (req, res) => {
     userData.cartData[req.body.itemId] += 1;
     await Users.findOneAndUpdate({_id:req.user.id}, {cartData:userData.cartData});
     res.send("Added")
-  })
+});
+
+app.post('/placeorder', fetchuser, async (req, res) => {
+  console.log("Order Placed");
+    let userData = await Users.findOne({_id:req.user.id});
+    await Users.findOneAndUpdate({_id:req.user.id}, {orderData:userData.orderData});
+    res.send("Added")
+});
+
+app.post('/getOrders', fetchuser, async (req, res) => {
+  console.log("Get Order");
+  let userData = await Users.findOne({_id:req.user.id});
+  res.json(userData.orderData);
+})
 
   //Create an endpoint for saving the product in cart
 app.post('/removefromcart', fetchuser, async (req, res) => {
